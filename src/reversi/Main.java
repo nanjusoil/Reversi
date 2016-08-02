@@ -5,6 +5,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+
 import javax.swing.*;
 import javax.swing.border.*;
 
@@ -85,14 +87,17 @@ public class Main {
 					@Override
 					public void mousePressed(MouseEvent mouseEvent) {
 						updateCanlick();
+						//System.out.println(i + " " + j);
 						if(chess[i][j].blackCanClick && currentState == Chess.BLACK){
 							checkOrFlip(i , j , true);
 							chess[i][j].dropBlack();
+							message.setText("White's Turn");
 							currentState = Chess.WHITE;
 						}
 						if(chess[i][j].whiteCanClick && currentState == Chess.WHITE){
 							checkOrFlip(i , j , true);
 							chess[i][j].dropWhite();
+							message.setText("Black's Turn");
 							currentState = Chess.BLACK;
 						}
 					}
@@ -103,6 +108,12 @@ public class Main {
     }
     
     public void updateCanlick(){
+    	for(int i = 0 ; i < 8 ; i++){
+    		for(int j = 0 ; j < 8 ; j++){
+    			chess[i][j].blackCanClick = false;
+    			chess[i][j].whiteCanClick = false;
+    		}
+    	}
     	for(int x = 0 ; x <8 ; x++){
     		for(int y = 0 ; y < 8 ; y++){
     			checkOrFlip(x, y , false);
@@ -112,107 +123,41 @@ public class Main {
     
     void checkOrFlip(int x , int y , boolean shouldFlip){
     	int nextState = 0;
+    	int[][] directions = { {-1 , 0} , {0 , -1} , {-1 , -1} , {1 , 1} , {1 , -1 } , {1 , 0} , {0 , 1} , {-1 , 1}};
+    	
 		if(chess[x][y].getState() == Chess.BLANK){
-			if( x + 1 < 8 )
-			nextState = chess[x +1][y].getState();
-			for(int i = x + 2; i < 8 ; i++){
-				if(i<8){
-					if(chess[ i ][ y ].getState() ==Chess.BLANK)
-						break;
-					if(chess[ i ][ y ].getState() != nextState){
-						if(nextState == Chess.BLACK){
-							if(shouldFlip){
-								for(int k = x + 1 ; k <=i ; k++)
-									chess[k][y].dropWhite();
-							}
-    						chess[ x ][ y ].whiteCanClick = true;
+			for(int direction = 0 ; direction < 8 ; direction++){
+				if(((x + directions[direction][0] >=0) && (x + directions[direction][0]) <8) && ((y + directions[direction][1] >=0) && (y + directions[direction][1] <8)))
+					nextState = chess[x + directions[direction][0]][y + directions[direction][1]].getState();
+				ArrayList<int []> myList = new ArrayList<int []>();
+				for(int i = x + directions[direction][0] * 2 , j = y + directions[direction][1] * 2; (i + directions[direction][0] < 8) && (i + directions[direction][0] >= 0) && (j + directions[direction][1]) < 8 && (j + directions[direction][1]) >= 0; i = i + directions[direction][0] , j = j + directions[direction][1]){
+					if(i >=0 && i <8 && j >=0 && j<8){
+						if( chess[i][j].getState() == Chess.BLANK){
+							break;
 						}
-						if(nextState == Chess.WHITE){
-							if(shouldFlip){
-								for(int k = x + 1 ; k <=i ; k++)
-									chess[k][y].dropBlack();
+						int[] temp={i, j};
+						myList.add(temp);
+						if( chess[i][j].getState() != nextState){
+							if(nextState == Chess.BLACK){
+								if(shouldFlip){
+									chess[x + directions[direction][0]][y + directions[direction][1]].dropWhite();
+									for(int k = 0 ; k <myList.size() ; k++){
+										chess[myList.get(k)[0]][myList.get(k)[1]].dropWhite();
+									}
+								}
+								chess[x][y].whiteCanClick = true;
 							}
-    						chess[ x ][ y ].blackCanClick = true;
-						}
-						break;
-					}
-				}
-			}
-			
-			if( x - 1 >= 0 )
-			nextState = chess[x - 1 ][y].getState();
-			for(int i = x - 2; i < 8 ; i++){
-				if(i >= 0){
-					if(chess[ i ][ y ].getState() ==Chess.BLANK)
-						break;
-					if(chess[ i ][ y ].getState() != nextState){
-						if(nextState == Chess.BLACK){
-							if(shouldFlip){
-								for(int k = x - 1 ; k >=i ; k--)
-									chess[k][y].dropWhite();
+							if(nextState == Chess.WHITE){
+								if(shouldFlip){
+									chess[x + directions[direction][0]][y + directions[direction][1]].dropBlack();
+									for(int k = 0 ; k <myList.size() ; k++){
+										chess[myList.get(k)[0]][myList.get(k)[1]].dropBlack();
+									}
+								}
+								chess[x][y].blackCanClick = true;
 							}
-    						chess[ x ][ y ].whiteCanClick = true;
+							break;
 						}
-						if(nextState == Chess.WHITE){
-							if(shouldFlip){
-								for(int k = x - 1 ; k >=i ; k--)
-									chess[k][y].dropBlack();
-							}
-    						chess[ x ][ y ].blackCanClick = true;
-						}
-					}
-					break;
-				}
-			}
-			
-			if( y + 1 < 8 )
-			nextState = chess[ x ][y + 1].getState();
-			for(int j = y + 2; j < 8 ; j++){
-				if(j < 8){
-					if(chess[ x ][ j ].getState() ==Chess.BLANK)
-						break;
-					if(chess[ x ][ j ].getState() != nextState){
-						if(nextState == Chess.BLACK){
-							if(shouldFlip){
-								for(int k = y + 1 ; k <= j ; k++)
-									chess[x][k].dropWhite();
-							}
-    						chess[ x ][ y ].whiteCanClick = true;
-						}
-						if(nextState == Chess.WHITE){
-							if(shouldFlip){
-								for(int k = y + 1 ; k <= j ; k++)
-									chess[x][k].dropBlack();
-							}
-    						chess[ x ][ y ].blackCanClick = true;
-						}
-						break;
-					}
-				}
-			}
-			
-			if( y - 1 >= 0 )
-			nextState = chess[ x ][y - 1 ].getState();
-			for(int j = y - 2; j >= 0 ; j--){
-				if(j >= 0){
-					if(chess[ x ][ j ].getState() ==Chess.BLANK)
-						break;
-					if(chess[ x ][ j ].getState() != nextState){
-						if(nextState == Chess.BLACK){
-							if(shouldFlip){
-								for(int k = y - 1 ; k >= j ; k--)
-									chess[x][k].dropWhite();
-							}
-    						chess[ x ][ y ].whiteCanClick = true;
-						}
-						if(nextState == Chess.WHITE){
-							if(shouldFlip){
-								for(int k = y - 1 ; k >= j ; k--)
-									chess[x][k].dropBlack();
-							}
-    						chess[ x ][ y ].blackCanClick = true;
-						}
-						break;
 					}
 				}
 			}
