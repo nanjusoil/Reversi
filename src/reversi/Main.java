@@ -1,5 +1,10 @@
 package reversi;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -13,12 +18,39 @@ import javax.swing.border.*;
 public class Main {
 
     private final JPanel gui = new JPanel(new BorderLayout(3, 3));
+    private final int counDownTime = 4;
     private Chess[][] chess = new Chess[8][8];
     private JPanel chessBoard;
     private final JLabel message = new JLabel(
             "Chess Champ is ready to play!");
+    int seconds = counDownTime ;
 	int currentState = Chess.BLACK;
+	SocketServer socketServer;
+	SocketClient socketClient;
     Main() {
+    	Timer timer = new Timer(1000, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(seconds == 0){
+					seconds = counDownTime;
+					if(currentState == Chess.BLACK){
+						message.setText("Whites Turn" + seconds);
+						currentState = Chess.WHITE;
+					}else{
+						message.setText("Blacks Turn" + seconds);
+						currentState = Chess.BLACK;
+					}
+				}
+				
+				if(currentState == Chess.BLACK){
+					message.setText("Blacks Turn" + seconds);
+				}else{
+					message.setText("Whites Turn" + seconds);
+				}
+				seconds--;
+			}
+    	  });
+    	timer.start();
         initializeGui();
         initializeChess();
         updateCanlick();
@@ -36,9 +68,55 @@ public class Main {
         JToolBar tools = new JToolBar();
         tools.setFloatable(false);
         gui.add(tools, BorderLayout.PAGE_START);
+        JButton buttonServer = new JButton("Server");
+        JButton buttonClient = new JButton("Client");
+        
+        buttonServer.addMouseListener(new MouseListener(){
+			@Override
+			public void mouseClicked(MouseEvent mouseEvent) {
+			}
+			@Override
+			public void mouseEntered(MouseEvent mouseEvent) {
+			}
+			@Override
+			public void mouseExited(MouseEvent mouseEvent) {
+			}
+			@Override
+			public void mousePressed(MouseEvent mouseEvent) {
+				socketServer = new SocketServer();
+				Thread serverThread = new Thread(socketServer);
+				serverThread.start();
+			}
+			@Override
+			public void mouseReleased(MouseEvent mouseEvent) {
+			}
+        	
+        });
+        
+        buttonClient.addMouseListener(new MouseListener(){
+			@Override
+			public void mouseClicked(MouseEvent mouseEvent) {
+			}
+			@Override
+			public void mouseEntered(MouseEvent mouseEvent) {
+			}
+			@Override
+			public void mouseExited(MouseEvent mouseEvent) {
+			}
+			@Override
+			public void mousePressed(MouseEvent mouseEvent) {
+				socketClient = new SocketClient();
+				Thread clientThread = new Thread(socketClient);
+				clientThread.start();
+			}
+			@Override
+			public void mouseReleased(MouseEvent mouseEvent) {
+			}
+        	
+        });
         tools.add(new JButton("New"));
-        tools.add(new JButton("Save"));
-        tools.add(new JButton("Restore"));
+        tools.add(buttonServer);
+        tools.add(buttonClient);
         tools.addSeparator();
         tools.add(new JButton("Resign"));
         tools.addSeparator();
@@ -89,12 +167,14 @@ public class Main {
 						updateCanlick();
 						//System.out.println(i + " " + j);
 						if(chess[i][j].blackCanClick && currentState == Chess.BLACK){
+							seconds = counDownTime;
 							checkOrFlip(i , j , true);
 							chess[i][j].dropBlack();
 							message.setText("White's Turn");
 							currentState = Chess.WHITE;
 						}
 						if(chess[i][j].whiteCanClick && currentState == Chess.WHITE){
+							seconds = counDownTime;
 							checkOrFlip(i , j , true);
 							chess[i][j].dropWhite();
 							message.setText("Black's Turn");
@@ -139,6 +219,7 @@ public class Main {
 						myList.add(temp);
 						if( chess[i][j].getState() != nextState){
 							if(nextState == Chess.BLACK){
+
 								if(shouldFlip){
 									chess[x + directions[direction][0]][y + directions[direction][1]].dropWhite();
 									for(int k = 0 ; k <myList.size() ; k++){

@@ -1,7 +1,9 @@
 package reversi;
 
 import java.awt.Color;
+import java.util.Timer;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 public class Chess {
@@ -23,10 +25,12 @@ public class Chess {
 	
 	void dropBlack(){
 		this.state = Chess.BLACK;
+        
 		this.jButton.setBackground(Color.BLACK);
 	}
 	void dropWhite(){
 		this.state = Chess.WHITE;
+		
 		this.jButton.setBackground(Color.WHITE);
 
 	}
