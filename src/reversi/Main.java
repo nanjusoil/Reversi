@@ -121,14 +121,20 @@ public class Main {
 						break;
 					if(chess[ i ][ y ].getState() != nextState){
 						if(nextState == Chess.BLACK){
-							for(int j = x + 1 ; j <= i ; j ++)
-								chess[ x ][ y ].dropWhite();
+							if(shouldFlip){
+								for(int k = x + 1 ; k <=i ; k++)
+									chess[k][y].dropWhite();
+							}
     						chess[ x ][ y ].whiteCanClick = true;
 						}
 						if(nextState == Chess.WHITE){
+							if(shouldFlip){
+								for(int k = x + 1 ; k <=i ; k++)
+									chess[k][y].dropBlack();
+							}
     						chess[ x ][ y ].blackCanClick = true;
 						}
-
+						break;
 					}
 				}
 			}
@@ -141,15 +147,21 @@ public class Main {
 						break;
 					if(chess[ i ][ y ].getState() != nextState){
 						if(nextState == Chess.BLACK){
-							for(int j = x -1 ; j >= i ; j --)
-								chess[ x ][ y ].dropWhite();
+							if(shouldFlip){
+								for(int k = x - 1 ; k >=i ; k--)
+									chess[k][y].dropWhite();
+							}
     						chess[ x ][ y ].whiteCanClick = true;
 						}
 						if(nextState == Chess.WHITE){
+							if(shouldFlip){
+								for(int k = x - 1 ; k >=i ; k--)
+									chess[k][y].dropBlack();
+							}
     						chess[ x ][ y ].blackCanClick = true;
 						}
-
 					}
+					break;
 				}
 			}
 			
@@ -161,13 +173,20 @@ public class Main {
 						break;
 					if(chess[ x ][ j ].getState() != nextState){
 						if(nextState == Chess.BLACK){
-							for(int i = y + 1 ; i <= j ; i ++)
-								chess[ x ][ y ].dropWhite();
+							if(shouldFlip){
+								for(int k = y + 1 ; k <= j ; k++)
+									chess[x][k].dropWhite();
+							}
     						chess[ x ][ y ].whiteCanClick = true;
 						}
 						if(nextState == Chess.WHITE){
+							if(shouldFlip){
+								for(int k = y + 1 ; k <= j ; k++)
+									chess[x][k].dropBlack();
+							}
     						chess[ x ][ y ].blackCanClick = true;
 						}
+						break;
 					}
 				}
 			}
@@ -180,13 +199,20 @@ public class Main {
 						break;
 					if(chess[ x ][ j ].getState() != nextState){
 						if(nextState == Chess.BLACK){
-							for(int i = y + 1 ; j <= i ; j ++)
-								chess[ x ][ y ].dropWhite();
+							if(shouldFlip){
+								for(int k = y - 1 ; k >= j ; k--)
+									chess[x][k].dropWhite();
+							}
     						chess[ x ][ y ].whiteCanClick = true;
 						}
 						if(nextState == Chess.WHITE){
+							if(shouldFlip){
+								for(int k = y - 1 ; k >= j ; k--)
+									chess[x][k].dropBlack();
+							}
     						chess[ x ][ y ].blackCanClick = true;
 						}
+						break;
 					}
 				}
 			}
