@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.io.IOException;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -26,7 +27,7 @@ public class MainPanel extends JPanel{
     ChessBoardPanel chessBoardPanel = new ChessBoardPanel();
 	
     private final JLabel message = new JLabel(
-            "Chess Champ is ready to play!");
+            "Chess is ready to play!");
     
 	Timer timer;
     
@@ -125,7 +126,11 @@ public class MainPanel extends JPanel{
 			}
 			@Override
 			public void mousePressed(MouseEvent arg0) {
-				chessBoardPanel.undo();
+				try {
+					chessBoardPanel.undo(false , -1);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 			@Override
 			public void mouseReleased(MouseEvent arg0) {

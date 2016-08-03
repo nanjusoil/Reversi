@@ -37,12 +37,21 @@ public class SocketClient implements Runnable{
 		SocketData socketData;
 		try {
 			while((socketData=(SocketData)in.readObject())!=null){
-				chessBoardPanel.isMyTurn = true;
-				chessBoardPanel.checkOrFlip(socketData.x , socketData.y, true);
-				chessBoardPanel.chess[socketData.x][socketData.y].dropBlack();
-				chessBoardPanel.seconds = chessBoardPanel.counDownTime;
-				chessBoardPanel.updateCanClick();
-				System.out.println(socketData.x + " " + socketData.y);
+				if(socketData.x == -1 && socketData.y ==-1){
+					if(socketData.confirm){
+						chessBoardPanel.undo(true , 1);
+					}else{
+						chessBoardPanel.undo(true , 0);
+					}
+				}
+				else{
+					chessBoardPanel.isMyTurn = true;
+					chessBoardPanel.checkOrFlip(socketData.x , socketData.y, true);
+					chessBoardPanel.chess[socketData.x][socketData.y].dropBlack();
+					chessBoardPanel.seconds = chessBoardPanel.counDownTime;
+					chessBoardPanel.updateCanClick();
+					System.out.println(socketData.x + " " + socketData.y);
+				}
 			}
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

@@ -6,7 +6,7 @@ import java.util.Timer;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
-public class Chess {
+public class Chess implements Cloneable{
 
 	JButton jButton =  new JButton();
 	
@@ -17,6 +17,17 @@ public class Chess {
 	boolean blackCanClick = false;
 	boolean whiteCanClick = false;
 	private int state;
+	@Override
+	 public Object clone() {
+	  try {
+			return super.clone();
+	} catch (CloneNotSupportedException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	  		return this;
+	}
+	 
 	Chess(){
 		this.jButton =  new JButton();
 		
