@@ -12,11 +12,11 @@ public class SocketClient implements Runnable{
 	static boolean canClick = false;
     ObjectOutputStream out;
     ObjectInputStream in;
-    Chess[][] chess= new Chess[8][8];
+    ChessBoardPanel chessBoardPanel;
     
-	public SocketClient(Chess[][] chess){
+	public SocketClient(ChessBoardPanel chessBoardPanel){
 		Socket client = new Socket() ;
-		this.chess = chess;
+		this.chessBoardPanel = chessBoardPanel;
 	    InetSocketAddress isa = new InetSocketAddress(this.address,this.port);
 	    try
 	    {
@@ -36,7 +36,10 @@ public class SocketClient implements Runnable{
 		SocketData socketData;
 		try {
 			while((socketData=(SocketData)in.readObject())!=null){
-				chess[socketData.x][socketData.y].dropBlack();
+				chessBoardPanel.isMyTurn = true;
+				chessBoardPanel.checkOrFlip(socketData.x , socketData.y, true);
+				chessBoardPanel.chess[socketData.x][socketData.y].dropBlack();
+				chessBoardPanel.updateCanClick();
 				System.out.println(socketData.x + " " + socketData.y);
 			}
 		} catch (ClassNotFoundException e) {

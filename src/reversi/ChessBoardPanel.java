@@ -15,11 +15,14 @@ import javax.swing.JPanel;
 public class ChessBoardPanel extends JPanel{
     Chess[][] chess = new Chess[8][8];
     int currentState = Chess.BLACK;
-    private final int counDownTime = 5;
+    private final int counDownTime = 30;
     int seconds = counDownTime ;
+    ArrayList<Chess[][]> undoChess = new ArrayList<Chess[][]>();
     
 	SocketServer socketServer = null ;
 	SocketClient socketClient = null ;
+	
+	boolean isMyTurn = true;;
     
     public ChessBoardPanel(){
     	super(new GridLayout(0, 8));
@@ -72,6 +75,9 @@ public class ChessBoardPanel extends JPanel{
         this.updateCanClick();
     }
     
+    public void undo(){
+    	chess = undoChess.get(undoChess.size()-2);
+    }
     public void initializeListener(int i , int j){
     	this.chess[i][j].jButton.addMouseListener(new MouseListener(){
 					@Override
@@ -83,30 +89,34 @@ public class ChessBoardPanel extends JPanel{
 					@Override
 					public void mousePressed(MouseEvent mouseEvent) {
 						updateCanClick();
-						if(chess[i][j].blackCanClick && currentState == Chess.BLACK){
+						if(chess[i][j].blackCanClick && currentState == Chess.BLACK && isMyTurn){
 							checkOrFlip(i , j , true);
 							chess[i][j].dropBlack();
 							changState();
 							try {
 								if(socketServer!=null){
+									isMyTurn = false;
 									socketServer.out.writeObject(new SocketData(i , j));
 								}
 								if(socketClient!=null){
+									isMyTurn = false;
 									socketClient.out.writeObject(new SocketData(i , j));
 								}
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
 							}
-						if(chess[i][j].whiteCanClick && currentState == Chess.WHITE){
+						if(chess[i][j].whiteCanClick && currentState == Chess.WHITE && isMyTurn){
 							checkOrFlip(i , j , true);
 							chess[i][j].dropWhite();
 							changState();
 							try {
 								if(socketServer!=null){
+									isMyTurn = false;
 									socketServer.out.writeObject(new SocketData(i , j));
 								}
 								if(socketClient!=null){
+									isMyTurn = false;
 									socketClient.out.writeObject(new SocketData(i , j));
 								}
 							} catch (IOException e) {
@@ -186,6 +196,8 @@ public class ChessBoardPanel extends JPanel{
     }
     
     public void changState(){
+    	if(socketServer != null || socketClient != null)
+    		return;
 		seconds = counDownTime;
 		if(this.currentState == Chess.BLACK){
 			//message.setText("Whites Turn" + seconds);
@@ -201,7 +213,6 @@ public class ChessBoardPanel extends JPanel{
     public void updateCanClick(){
     	for(int i = 0 ; i < 8 ; i++){
     		for(int j = 0 ; j < 8 ; j++){
-
     			this.chess[i][j].blackCanClick = false;
     			this.chess[i][j].whiteCanClick = false;
     		}

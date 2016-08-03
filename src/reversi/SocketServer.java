@@ -14,10 +14,10 @@ public class SocketServer implements Runnable {
 	private ServerSocket server;
     ObjectOutputStream out;
     ObjectInputStream in;
-    Chess[][] chess= new Chess[8][8];
+    ChessBoardPanel chessBoardPanel;
 
-	public SocketServer(Chess[][] chess){
-		this.chess = chess;
+	public SocketServer(ChessBoardPanel chessBoardPanel){
+		this.chessBoardPanel = chessBoardPanel;
 		try
 		{
 			server = new ServerSocket(port);
@@ -44,7 +44,10 @@ public class SocketServer implements Runnable {
 				out = new ObjectOutputStream(socket.getOutputStream());
 				
 				while((socketData=(SocketData)in.readObject())!=null){
-					chess[socketData.x][socketData.y].dropWhite();
+					chessBoardPanel.isMyTurn = true;
+					chessBoardPanel.checkOrFlip(socketData.x , socketData.y, true);
+					chessBoardPanel.chess[socketData.x][socketData.y].dropWhite();
+					chessBoardPanel.updateCanClick();
 					System.out.println(socketData.x + " " + socketData.y);
 				}
 			}
