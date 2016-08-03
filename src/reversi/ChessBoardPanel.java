@@ -24,6 +24,7 @@ public class ChessBoardPanel extends JPanel{
 	SocketClient socketClient = null ;
 	
 	boolean isMyTurn = true;;
+	int timeOfUndo = 0;
     
     public ChessBoardPanel(){
     	super(new GridLayout(0, 8));
@@ -84,8 +85,11 @@ public class ChessBoardPanel extends JPanel{
     		socketClient.out.writeObject(new SocketData(-1 , -1 , SocketData.WAITFORCOMFIRM));
     	}
     	else if(undoChess.size()>=2){
-        	this.chess = undoChess.get(undoChess.size()-2);
-        	undoChess.remove(undoChess.size()-1);	
+    		if(timeOfUndo <2){
+            	this.chess = undoChess.get(undoChess.size()-2);
+            	undoChess.remove(undoChess.size()-1);	
+    		}
+    		timeOfUndo++;
     	}
     	updateCanClick();
     }
