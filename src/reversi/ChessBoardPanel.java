@@ -15,6 +15,8 @@ import javax.swing.JPanel;
 public class ChessBoardPanel extends JPanel{
     Chess[][] chess = new Chess[8][8];
     int currentState = Chess.BLACK;
+    private final int counDownTime = 5;
+    int seconds = counDownTime ;
     
 	SocketServer socketServer = null ;
 	SocketClient socketClient = null ;
@@ -81,7 +83,6 @@ public class ChessBoardPanel extends JPanel{
 					@Override
 					public void mousePressed(MouseEvent mouseEvent) {
 						updateCanClick();
-						//System.out.println(i + " " + j);
 						if(chess[i][j].blackCanClick && currentState == Chess.BLACK){
 							checkOrFlip(i , j , true);
 							chess[i][j].dropBlack();
@@ -111,6 +112,11 @@ public class ChessBoardPanel extends JPanel{
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
+						}
+						
+						if(!hasNext()){
+							System.out.println("finished");
+							changState();
 						}
 					}
 					@Override
@@ -168,9 +174,19 @@ public class ChessBoardPanel extends JPanel{
 		this.checkBoard();
     }
     
+    public boolean hasNext(){
+    	for(int i = 0 ; i < 8 ; i++)
+    		for(int j = 0 ; j < 8 ; j++){
+    			if(chess[i][j].blackCanClick && currentState == Chess.BLACK)
+    				return true;
+    			if(chess[i][j].whiteCanClick && currentState == Chess.WHITE)
+    				return true;
+    		}
+    	return false;
+    }
+    
     public void changState(){
-    	this.checkBoard();
-		//seconds = counDownTime;
+		seconds = counDownTime;
 		if(this.currentState == Chess.BLACK){
 			//message.setText("Whites Turn" + seconds);
 			this.currentState = Chess.WHITE;
@@ -185,6 +201,7 @@ public class ChessBoardPanel extends JPanel{
     public void updateCanClick(){
     	for(int i = 0 ; i < 8 ; i++){
     		for(int j = 0 ; j < 8 ; j++){
+
     			this.chess[i][j].blackCanClick = false;
     			this.chess[i][j].whiteCanClick = false;
     		}
