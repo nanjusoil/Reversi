@@ -38,11 +38,7 @@ public class SocketClient implements Runnable{
 		try {
 			while((socketData=(SocketData)in.readObject())!=null){
 				if(socketData.x == -1 && socketData.y ==-1){
-					if(socketData.confirm){
-						chessBoardPanel.undo(true , 1);
-					}else{
-						chessBoardPanel.undo(true , 0);
-					}
+					//chessBoardPanel.undo(true , 0);
 				}
 				else{
 					chessBoardPanel.isMyTurn = true;

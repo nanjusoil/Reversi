@@ -46,7 +46,7 @@ public class SocketServer implements Runnable {
 				
 				while((socketData=(SocketData)in.readObject())!=null){
 					if(socketData.x == -1 && socketData.y ==-1){
-						chessBoardPanel.undo(true , 0);
+						//chessBoardPanel.undo(true , 0);
 					}
 					else{
 					chessBoardPanel.isMyTurn = true;

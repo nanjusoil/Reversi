@@ -76,26 +76,24 @@ public class ChessBoardPanel extends JPanel{
         this.updateCanClick();
     }
     
-    public void undo(boolean fromSocket , int socketConfirm) throws IOException{
-    	if(fromSocket && socketConfirm == 0){
+    public void undo() throws IOException{
+    	if(socketServer != null){
+    		socketServer.out.writeObject(new SocketData(-1 , -1));
     		int dialogResult = JOptionPane.showConfirmDialog (null, "Undo one step?","Undo",JOptionPane.YES_NO_OPTION);
     		if(dialogResult == JOptionPane.YES_OPTION){
-    	    	if(socketServer != null){
-    	    		socketServer.out.writeObject(new SocketData(-1 , -1 , true));
-    	    	}
-    	    	else if(socketClient != null){
-    	    		socketClient.out.writeObject(new SocketData(-1 , -1 , true));
-    	    	}
+            	this.chess = undoChess.get(undoChess.size()-2);
+            	undoChess.remove(undoChess.size()-1);	
     		}
     	}
-    	else if(fromSocket && socketConfirm == 1){
-    		this.chess = undoChess.get(undoChess.size()-2);
-        	undoChess.remove(undoChess.size()-1);
+    	else if(socketClient != null){
+    		socketClient.out.writeObject(new SocketData(-1 , -1));
+    		int dialogResult = JOptionPane.showConfirmDialog (null, "Undo one step?","Undo",JOptionPane.YES_NO_OPTION);
+    		if(dialogResult == JOptionPane.YES_OPTION){
+            	this.chess = undoChess.get(undoChess.size()-2);
+            	undoChess.remove(undoChess.size()-1);	
+    		}
     	}
-    	else if(fromSocket && socketConfirm ==-1){
-    		
-    	}
-    	else if(undoChess.size()>=2 && socketConfirm != -1){
+    	else if(undoChess.size()>=2){
         	this.chess = undoChess.get(undoChess.size()-2);
         	undoChess.remove(undoChess.size()-1);	
     	}

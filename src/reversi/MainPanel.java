@@ -127,7 +127,8 @@ public class MainPanel extends JPanel{
 			@Override
 			public void mousePressed(MouseEvent arg0) {
 				try {
-					chessBoardPanel.undo(false , -1);
+					//chessBoardPanel.undo(false , -1);
+					chessBoardPanel.undo();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
