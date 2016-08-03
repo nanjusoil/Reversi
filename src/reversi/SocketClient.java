@@ -21,6 +21,7 @@ public class SocketClient implements Runnable{
 	    try
 	    {
 	    	client.connect(isa,10000);
+			chessBoardPanel.seconds = chessBoardPanel.counDownTime;
 	    	out = new ObjectOutputStream(client.getOutputStream());
 	    	in = new ObjectInputStream(client.getInputStream());
 	    	
@@ -39,6 +40,7 @@ public class SocketClient implements Runnable{
 				chessBoardPanel.isMyTurn = true;
 				chessBoardPanel.checkOrFlip(socketData.x , socketData.y, true);
 				chessBoardPanel.chess[socketData.x][socketData.y].dropBlack();
+				chessBoardPanel.seconds = chessBoardPanel.counDownTime;
 				chessBoardPanel.updateCanClick();
 				System.out.println(socketData.x + " " + socketData.y);
 			}

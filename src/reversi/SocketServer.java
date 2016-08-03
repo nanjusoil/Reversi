@@ -39,6 +39,7 @@ public class SocketServer implements Runnable {
 			{
 				socket = server.accept();
 				System.out.println("Server Accepted");
+				chessBoardPanel.seconds = chessBoardPanel.counDownTime;
 
 				in = new ObjectInputStream(socket.getInputStream());
 				out = new ObjectOutputStream(socket.getOutputStream());
@@ -47,6 +48,7 @@ public class SocketServer implements Runnable {
 					chessBoardPanel.isMyTurn = true;
 					chessBoardPanel.checkOrFlip(socketData.x , socketData.y, true);
 					chessBoardPanel.chess[socketData.x][socketData.y].dropWhite();
+					chessBoardPanel.seconds = chessBoardPanel.counDownTime;
 					chessBoardPanel.updateCanClick();
 					System.out.println(socketData.x + " " + socketData.y);
 				}

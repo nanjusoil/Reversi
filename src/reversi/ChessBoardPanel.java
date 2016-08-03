@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 public class ChessBoardPanel extends JPanel{
     Chess[][] chess = new Chess[8][8];
     int currentState = Chess.BLACK;
-    private final int counDownTime = 30;
+    final int counDownTime = 30;
     int seconds = counDownTime ;
     ArrayList<Chess[][]> undoChess = new ArrayList<Chess[][]>();
     
@@ -196,9 +196,11 @@ public class ChessBoardPanel extends JPanel{
     }
     
     public void changState(){
-    	if(socketServer != null || socketClient != null)
+    	if(socketServer != null || socketClient != null){
+    		seconds = counDownTime;
     		return;
-		seconds = counDownTime;
+    	}
+    	seconds = counDownTime;
 		if(this.currentState == Chess.BLACK){
 			//message.setText("Whites Turn" + seconds);
 			this.currentState = Chess.WHITE;
