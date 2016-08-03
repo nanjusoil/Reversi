@@ -38,7 +38,7 @@ public class SocketClient implements Runnable{
 		try {
 			while((socketData=(SocketData)in.readObject())!=null){
 				if(socketData.x == -1 && socketData.y ==-1){
-					//chessBoardPanel.undo(true , 0);
+					chessBoardPanel.undo(socketData.state);
 				}
 				else{
 					chessBoardPanel.isMyTurn = true;

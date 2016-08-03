@@ -3,13 +3,14 @@ package reversi;
 import java.io.Serializable;
 
 public class SocketData implements Serializable{
+	public static final int COMFIRM = 1 , WAITFORCOMFIRM = 2 , DENIED = 3;
 	int x;
 	int y;
-	boolean confirm;
-	SocketData(int x, int y , boolean confirm){
+	int state;
+	SocketData(int x, int y , int state){
 		this.x = x;
 		this.y = y;
-		this.confirm = confirm;
+		this.state = state;
 	}
 	
 	SocketData(int x, int y){

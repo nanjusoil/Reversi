@@ -78,20 +78,10 @@ public class ChessBoardPanel extends JPanel{
     
     public void undo() throws IOException{
     	if(socketServer != null){
-    		socketServer.out.writeObject(new SocketData(-1 , -1));
-    		int dialogResult = JOptionPane.showConfirmDialog (null, "Undo one step?","Undo",JOptionPane.YES_NO_OPTION);
-    		if(dialogResult == JOptionPane.YES_OPTION){
-            	this.chess = undoChess.get(undoChess.size()-2);
-            	undoChess.remove(undoChess.size()-1);	
-    		}
+    		socketServer.out.writeObject(new SocketData(-1 , -1 , SocketData.WAITFORCOMFIRM));
     	}
     	else if(socketClient != null){
-    		socketClient.out.writeObject(new SocketData(-1 , -1));
-    		int dialogResult = JOptionPane.showConfirmDialog (null, "Undo one step?","Undo",JOptionPane.YES_NO_OPTION);
-    		if(dialogResult == JOptionPane.YES_OPTION){
-            	this.chess = undoChess.get(undoChess.size()-2);
-            	undoChess.remove(undoChess.size()-1);	
-    		}
+    		socketClient.out.writeObject(new SocketData(-1 , -1 , SocketData.WAITFORCOMFIRM));
     	}
     	else if(undoChess.size()>=2){
         	this.chess = undoChess.get(undoChess.size()-2);
@@ -99,6 +89,59 @@ public class ChessBoardPanel extends JPanel{
     	}
     	updateCanClick();
     }
+    
+    public void undo(int state) throws IOException{
+    	System.out.println(state);
+    	if(state == SocketData.COMFIRM){
+        	this.chess = undoChess.get(undoChess.size()-2);
+        	undoChess.remove(undoChess.size()-1);	
+    	}
+    	else if(state == SocketData.DENIED) {
+    		
+    	}else if(state == SocketData.WAITFORCOMFIRM) {
+        	int dialogResult = JOptionPane.showConfirmDialog (null, "Undo one step?","Undo",JOptionPane.YES_NO_OPTION);
+    		if(dialogResult == JOptionPane.YES_OPTION){
+    	    	if(socketServer != null){
+    	    		socketServer.out.writeObject(new SocketData(-1 , -1 , SocketData.COMFIRM));
+    	    		System.out.println("Server wrtie");
+    	    	}
+    	    	else if(socketClient != null){
+    	    		socketClient.out.writeObject(new SocketData(-1 , -1 , SocketData.COMFIRM));
+    	    		System.out.println("Server wrtie");
+    	    	}
+            	this.chess = undoChess.get(undoChess.size()-2);
+            	undoChess.remove(undoChess.size()-1);		
+    		}else{
+    	    	if(socketServer != null){
+    	    		socketServer.out.writeObject(new SocketData(-1 , -1 , SocketData.DENIED));
+    	    	}
+    	    	else if(socketClient != null){
+    	    		socketClient.out.writeObject(new SocketData(-1 , -1 , SocketData.DENIED));
+    	    	}
+    		}
+    	}
+    	updateCanClick();
+    }
+    
+    /*public void undoCheck() throws IOException{
+    	int dialogResult = JOptionPane.showConfirmDialog (null, "Undo one step?","Undo",JOptionPane.YES_NO_OPTION);
+		if(dialogResult == JOptionPane.YES_OPTION){
+	    	if(socketServer != null){
+	    		socketServer.out.writeObject(new SocketData(-1 , -1 , true));
+	    	}
+	    	else if(socketClient != null){
+	    		socketClient.out.writeObject(new SocketData(-1 , -1 , true));
+	    	}
+		}else{
+	    	if(socketServer != null){
+	    		socketServer.out.writeObject(new SocketData(-1 , -1 , false));
+	    	}
+	    	else if(socketClient != null){
+	    		socketClient.out.writeObject(new SocketData(-1 , -1 , false));
+	    	}
+		}
+    }*/
+    
     public void initializeListener(int i , int j){
     	this.chess[i][j].jButton.addMouseListener(new MouseListener(){
 					@Override
