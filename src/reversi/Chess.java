@@ -35,6 +35,14 @@ public class Chess {
 
 	}
 	
+	void dropCanClick(){
+		this.jButton.setBackground(Color.lightGray);
+	}
+	
+	void initButton(){
+		this.jButton.setBackground(Color.ORANGE);
+	}
+	
 	public int getState(){
 		return state;
 	}

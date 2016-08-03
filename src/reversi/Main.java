@@ -10,6 +10,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -18,28 +19,22 @@ import javax.swing.border.*;
 public class Main {
 
     private final JPanel gui = new JPanel(new BorderLayout(3, 3));
-    private final int counDownTime = 4;
+    private final int counDownTime = 30;
     private Chess[][] chess = new Chess[8][8];
     private JPanel chessBoard;
     private final JLabel message = new JLabel(
             "Chess Champ is ready to play!");
     int seconds = counDownTime ;
 	int currentState = Chess.BLACK;
-	SocketServer socketServer;
-	SocketClient socketClient;
+	SocketServer socketServer = null ;
+	SocketClient socketClient = null ;
+	Timer timer;
     Main() {
-    	Timer timer = new Timer(1000, new ActionListener() {
+    	timer = new Timer(1000, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(seconds == 0){
-					seconds = counDownTime;
-					if(currentState == Chess.BLACK){
-						message.setText("Whites Turn" + seconds);
-						currentState = Chess.WHITE;
-					}else{
-						message.setText("Blacks Turn" + seconds);
-						currentState = Chess.BLACK;
-					}
+					changState();
 				}
 				
 				if(currentState == Chess.BLACK){
@@ -53,7 +48,8 @@ public class Main {
     	timer.start();
         initializeGui();
         initializeChess();
-        updateCanlick();
+        updateCanClick();
+        checkBoard();
     }
 
     public final void initializeChess(){
@@ -83,7 +79,9 @@ public class Main {
 			}
 			@Override
 			public void mousePressed(MouseEvent mouseEvent) {
-				socketServer = new SocketServer();
+				currentState = Chess.BLACK;
+				timer.stop();
+				socketServer = new SocketServer(chess);
 				Thread serverThread = new Thread(socketServer);
 				serverThread.start();
 			}
@@ -105,7 +103,9 @@ public class Main {
 			}
 			@Override
 			public void mousePressed(MouseEvent mouseEvent) {
-				socketClient = new SocketClient();
+				currentState = Chess.WHITE;
+				timer.stop();
+				socketClient = new SocketClient(chess);
 				Thread clientThread = new Thread(socketClient);
 				clientThread.start();
 			}
@@ -164,21 +164,37 @@ public class Main {
 					public void mouseExited(MouseEvent mouseEvent) {}
 					@Override
 					public void mousePressed(MouseEvent mouseEvent) {
-						updateCanlick();
+						updateCanClick();
 						//System.out.println(i + " " + j);
 						if(chess[i][j].blackCanClick && currentState == Chess.BLACK){
-							seconds = counDownTime;
 							checkOrFlip(i , j , true);
 							chess[i][j].dropBlack();
-							message.setText("White's Turn");
-							currentState = Chess.WHITE;
-						}
+							changState();
+							try {
+								if(socketServer!=null){
+									socketServer.out.writeObject(new SocketData(i , j));
+								}
+								if(socketClient!=null){
+									socketClient.out.writeObject(new SocketData(i , j));
+								}
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+							}
 						if(chess[i][j].whiteCanClick && currentState == Chess.WHITE){
-							seconds = counDownTime;
 							checkOrFlip(i , j , true);
 							chess[i][j].dropWhite();
-							message.setText("Black's Turn");
-							currentState = Chess.BLACK;
+							changState();
+							try {
+								if(socketServer!=null){
+									socketServer.out.writeObject(new SocketData(i , j));
+								}
+								if(socketClient!=null){
+									socketClient.out.writeObject(new SocketData(i , j));
+								}
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
 						}
 					}
 					@Override
@@ -187,7 +203,7 @@ public class Main {
             	});
     }
     
-    public void updateCanlick(){
+    public void updateCanClick(){
     	for(int i = 0 ; i < 8 ; i++){
     		for(int j = 0 ; j < 8 ; j++){
     			chess[i][j].blackCanClick = false;
@@ -247,6 +263,43 @@ public class Main {
 			chess[x][y].blackCanClick = false;
 			chess[x][y].whiteCanClick = false;
 		}
+    	checkBoard();
+    }
+    
+    public void changState(){
+    	checkBoard();
+		seconds = counDownTime;
+		if(currentState == Chess.BLACK){
+			message.setText("Whites Turn" + seconds);
+			currentState = Chess.WHITE;
+		}else{
+			message.setText("Blacks Turn" + seconds);
+			currentState = Chess.BLACK;
+		}
+		updateCanClick();
+		checkBoard();
+    }
+    
+    public void checkBoard(){
+    	for(int i = 0 ; i < 8 ; i++)
+    		for(int j = 0 ; j < 8 ; j++){
+    			if(chess[i][j].getState() == Chess.BLANK)
+    				chess[i][j].initButton();
+    			if(chess[i][j].getState() == Chess.BLACK)
+    				chess[i][j].dropBlack();
+    			if(chess[i][j].getState() == Chess.WHITE)
+    				chess[i][j].dropWhite();
+    		}	
+    			
+    	for(int i = 0 ; i < 8 ; i++)
+    		for(int j = 0 ; j < 8 ; j++){
+    			if(currentState == Chess.BLACK && chess[i][j].blackCanClick == true && chess[i][j].getState() == Chess.BLANK){
+    				chess[i][j].dropCanClick();
+    			}else if(currentState == Chess.WHITE && chess[i][j].whiteCanClick == true && chess[i][j].getState() == Chess.BLANK){
+    				chess[i][j].dropCanClick();
+    			}
+    		}
+    			
     }
     
     public static void main(String[] args) {

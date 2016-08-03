@@ -12,8 +12,11 @@ public class SocketClient implements Runnable{
 	static boolean canClick = false;
     ObjectOutputStream out;
     ObjectInputStream in;
-	public SocketClient(){
+    Chess[][] chess= new Chess[8][8];
+    
+	public SocketClient(Chess[][] chess){
 		Socket client = new Socket() ;
+		this.chess = chess;
 	    InetSocketAddress isa = new InetSocketAddress(this.address,this.port);
 	    try
 	    {
@@ -30,6 +33,16 @@ public class SocketClient implements Runnable{
 	
 	@Override
 	public void run() {
-		
+		SocketData socketData;
+		try {
+			while((socketData=(SocketData)in.readObject())!=null){
+				chess[socketData.x][socketData.y].dropBlack();
+				System.out.println(socketData.x + " " + socketData.y);
+			}
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

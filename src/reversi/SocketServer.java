@@ -14,8 +14,10 @@ public class SocketServer implements Runnable {
 	private ServerSocket server;
     ObjectOutputStream out;
     ObjectInputStream in;
+    Chess[][] chess= new Chess[8][8];
 
-	public SocketServer(){
+	public SocketServer(Chess[][] chess){
+		this.chess = chess;
 		try
 		{
 			server = new ServerSocket(port);
@@ -29,7 +31,7 @@ public class SocketServer implements Runnable {
 	public void run() {
 		Socket socket ;
 		System.out.println("Server Started!");
-		//Data data;
+		SocketData socketData;
 		while(true)
 		{
 			socket = null;
@@ -40,17 +42,17 @@ public class SocketServer implements Runnable {
 
 				in = new ObjectInputStream(socket.getInputStream());
 				out = new ObjectOutputStream(socket.getOutputStream());
-				/*
-				while((data=(Data)in.readObject())!=null){
-					this.canClick = true;
-					chesspanel.chess[data.getX()/100][data.getY()/100] = 1;
-					chesspanel.repaint();
-					System.out.println(""+data.getX());
-					System.out.println(""+data.getY());
-				}*/
+				
+				while((socketData=(SocketData)in.readObject())!=null){
+					chess[socketData.x][socketData.y].dropWhite();
+					System.out.println(socketData.x + " " + socketData.y);
+				}
 			}
 			catch(java.io.IOException e)
 			{
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}
