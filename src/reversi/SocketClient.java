@@ -46,7 +46,6 @@ public class SocketClient implements Runnable{
 					chessBoardPanel.dropChess(socketData.x, socketData.y, true);
 					chessBoardPanel.seconds = chessBoardPanel.counDownTime;
 					chessBoardPanel.updateCanClick();
-					//System.out.println(socketData.x + " " + socketData.y);
 				}
 			}
 		} catch (ClassNotFoundException e) {

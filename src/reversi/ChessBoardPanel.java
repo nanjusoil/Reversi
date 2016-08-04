@@ -1,19 +1,27 @@
 package reversi;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Label;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 public class ChessBoardPanel extends JPanel{
     Chess[][] chess = new Chess[8][8];
@@ -28,6 +36,10 @@ public class ChessBoardPanel extends JPanel{
 	boolean isMyTurn = true;;
 	int timeOfUndo = 0;
     
+	JPanel chatPanel;
+	JTextField chatTextField ;
+	JTextArea chatTextArea;
+	JScrollPane scrollPane;
     public ChessBoardPanel(){
     	super(new GridLayout(0, 8));
         Insets buttonMargin = new Insets(0,0,0,0);
@@ -47,6 +59,39 @@ public class ChessBoardPanel extends JPanel{
                 this.add(chess[j][i].jButton);
             }
         }
+        
+        chatPanel = new JPanel();
+        chatPanel.setLayout(new BoxLayout(chatPanel , BoxLayout.Y_AXIS));
+        chatTextField = new JTextField(20); 
+        
+        chatTextArea = new JTextArea();
+        chatTextArea.setEditable(false);
+        scrollPane = new JScrollPane( chatTextArea );
+        scrollPane.setPreferredSize(new Dimension(50,50));
+
+        
+        chatPanel.add(scrollPane);
+        chatPanel.add(chatTextField);
+        
+        chatTextField.addKeyListener(new KeyListener(){
+
+			@Override
+			public void keyPressed(KeyEvent keyEvent) {
+				if(keyEvent.getKeyCode() == keyEvent.VK_ENTER){
+					chatTextArea.setText(chatTextArea.getText() + "\n" + chatTextField.getText());
+					chatTextField.setText("");
+				}
+			}
+
+			@Override
+			public void keyReleased(KeyEvent keyEvent) {
+			}
+
+			@Override
+			public void keyTyped(KeyEvent keyEvent) {
+			}
+        	
+        });
     }
     
     public void checkBoard(){
@@ -115,7 +160,6 @@ public class ChessBoardPanel extends JPanel{
     }
     
     public void undo(int state) throws IOException{
-    	System.out.println(state);
     	if(state == SocketData.COMFIRM){
         	this.chess = undoChess.get(undoChess.size()-2);
         	undoChess.remove(undoChess.size()-1);	
@@ -162,7 +206,6 @@ public class ChessBoardPanel extends JPanel{
 								tempChess[i][j] = (Chess) chess[i][j].clone();
 							}
 						}
-						System.out.print(undoChess.size());
 						if(chess[i][j].blackCanClick && currentState == Chess.BLACK && isMyTurn){
 
 							undoChess.add(tempChess);
