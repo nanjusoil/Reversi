@@ -68,6 +68,73 @@ public class MainPanel extends JPanel{
         JButton buttonClient = new JButton("Client");
         JButton buttonUndo = new JButton("Undo");
         
+        JButton buttonSave = new JButton("Save");
+        JButton buttonOpenFile = new JButton("OpenFile");
+        
+        buttonSave.addMouseListener(new MouseListener(){
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				chessBoardPanel.saveFileDialog();
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+        	
+        });
+        buttonOpenFile.addMouseListener(new MouseListener(){
+
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				chessBoardPanel.openFileDialog();
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+        	
+        });
         buttonServer.addMouseListener(new MouseListener(){
 			@Override
 			public void mouseClicked(MouseEvent mouseEvent) {
@@ -147,7 +214,10 @@ public class MainPanel extends JPanel{
         tools.add(buttonServer);
         tools.add(buttonClient);
         tools.addSeparator();
-        //tools.add(new JButton("Resign"));
+        
+        tools.add(buttonSave);
+        tools.add(buttonOpenFile);
+        
         tools.addSeparator();
         tools.add(message);
 
@@ -157,4 +227,6 @@ public class MainPanel extends JPanel{
         this.add(chessBoardPanel.chatPanel, BorderLayout.PAGE_END);
         this.add(chessBoardPanel.statPanel , BorderLayout.EAST);
     }
+    
+    
 }

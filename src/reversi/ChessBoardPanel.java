@@ -12,11 +12,18 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -381,5 +388,75 @@ public class ChessBoardPanel extends JPanel{
     	}
     	
     	statTextArea.setText("Whites:  "  + numOfWhite + "\nBlacks: " + numOfBlack);
+    }
+    
+    public void saveFileDialog(){
+    	JFileChooser fileChooser=new JFileChooser();
+    	File file;
+
+    	fileChooser.setCurrentDirectory(new File("."));
+    	fileChooser.setSelectedFile(new File("ChessData.data"));
+		int response =fileChooser.showSaveDialog(null);
+			
+		if(response == JFileChooser.APPROVE_OPTION){
+			try{
+				File selectedFile=fileChooser.getSelectedFile();
+				saveToFile(selectedFile.getAbsolutePath());
+			}catch(Exception ers2){}
+		}
+    }
+    
+    public void openFileDialog(){
+    	JFileChooser fileChooser=new JFileChooser();
+    	fileChooser.setCurrentDirectory(new File("."));
+    	fileChooser.setSelectedFile(new File("ChessData.data"));
+    	
+		int response=fileChooser.showDialog(null,"Open");
+		
+		if(response == JFileChooser.APPROVE_OPTION)
+		{
+			File selectedFile = fileChooser.getSelectedFile();
+			openFromFile(selectedFile.getAbsolutePath());
+		}
+    }
+    
+    public void saveToFile(String fileName){
+    	try{
+        	FileOutputStream fileOutPutStream = new FileOutputStream(fileName);
+    		ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutPutStream);
+    		objectOutputStream.writeObject(new ChessBoardData(chess));
+    	}catch(IOException e){
+    		e.printStackTrace();
+    	}
+
+    }
+    
+    public void openFromFile(String fileName){
+		try {
+			System.out.println(fileName);
+	    	ChessBoardData chessBoardData;
+			FileInputStream fileInputStream;
+			fileInputStream = new FileInputStream(fileName);
+			ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+			chessBoardData = (ChessBoardData)objectInputStream.readObject();
+			
+			for(int i = 0 ; i < 8 ; i++){
+				for(int j = 0 ; j < 8 ; j++){
+					this.chess[i][j].blackCanClick = chessBoardData.chess[i][j].blackCanClick;
+					this.chess[i][j].setState(chessBoardData.chess[i][j].getState());
+					this.chess[i][j].whiteCanClick = chessBoardData.chess[i][j].whiteCanClick;
+				}
+			}
+			checkBoard();
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(null, "FileNotFoundException!");
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			JOptionPane.showMessageDialog(null, "ClassNotFoundException!");
+			e.printStackTrace();
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null, "File type Error!");
+			e.printStackTrace();
+		}
     }
 }

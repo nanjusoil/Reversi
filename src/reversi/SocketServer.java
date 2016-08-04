@@ -8,6 +8,8 @@ import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import javax.swing.JOptionPane;
+
 public class SocketServer implements Runnable {
 	private String address = "127.0.0.1";
 	private int port = 8765;
@@ -46,7 +48,7 @@ public class SocketServer implements Runnable {
 				
 				while((socketData=(SocketData)in.readObject())!=null){
 					if(!socketData.message.isEmpty()){
-						chessBoardPanel.chatTextArea.setText(chessBoardPanel.chatTextArea.getText() + "\n" + socketData.message);
+						chessBoardPanel.chatTextArea.setText(chessBoardPanel.chatTextArea.getText() + "\n Opponent:" + socketData.message);
 					}
 					else if(socketData.state != 0){
 						chessBoardPanel.undo(socketData.state);
@@ -60,12 +62,16 @@ public class SocketServer implements Runnable {
 					}
 				}
 			}
-			catch(java.io.IOException e)
+			catch(IOException e)
 			{
+				JOptionPane.showMessageDialog(null , "Connection Lost!");
+				System.exit(0);
+				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
+	
 }

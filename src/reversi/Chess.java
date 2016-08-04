@@ -1,12 +1,13 @@
 package reversi;
 
 import java.awt.Color;
+import java.io.Serializable;
 import java.util.Timer;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
-public class Chess implements Cloneable{
+public class Chess implements Cloneable , Serializable{
 
 	JButton jButton =  new JButton();
 	
@@ -56,5 +57,9 @@ public class Chess implements Cloneable{
 	
 	public int getState(){
 		return state;
+	}
+
+	public void setState(int state){
+		this.state = state;
 	}
 }

@@ -6,6 +6,8 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import javax.swing.JOptionPane;
+
 public class SocketClient implements Runnable{
 	private String address = "127.0.0.1";
 	private int port = 8765;
@@ -38,7 +40,7 @@ public class SocketClient implements Runnable{
 		try {
 			while((socketData=(SocketData)in.readObject())!=null){
 				if(!socketData.message.isEmpty()){
-					chessBoardPanel.chatTextArea.setText(chessBoardPanel.chatTextArea.getText() + "\n" + socketData.message);
+					chessBoardPanel.chatTextArea.setText(chessBoardPanel.chatTextArea.getText() + "\n Opponent:" + socketData.message);
 				}
 				else if(socketData.state != 0){
 					chessBoardPanel.undo(socketData.state);
@@ -53,6 +55,8 @@ public class SocketClient implements Runnable{
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
+			JOptionPane.showMessageDialog(null , "Connection Lost!");
+			System.exit(0);
 			e.printStackTrace();
 		}
 	}
