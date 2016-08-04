@@ -7,9 +7,7 @@ public class SocketData implements Serializable{
 	int x;
 	int y;
 	int state;
-	SocketData(int x, int y , int state){
-		this.x = x;
-		this.y = y;
+	SocketData(int state){
 		this.state = state;
 	}
 	

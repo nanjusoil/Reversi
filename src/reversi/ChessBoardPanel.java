@@ -1,8 +1,10 @@
 package reversi;
 
 import java.awt.Color;
+import java.awt.Dialog;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.Label;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -69,6 +71,22 @@ public class ChessBoardPanel extends JPanel{
     			
     }
     
+    public void dropChess(int x, int y , boolean isBlack){
+		Chess[][] tempChess = new Chess[8][8];
+		for(int i = 0 ; i < 8 ; i++){
+			for(int j = 0 ; j < 8 ; j++){
+				tempChess[i][j] = (Chess) chess[i][j].clone();
+			}
+		}
+		undoChess.add(tempChess);
+		
+    	if(isBlack){
+    		chess[x][y].dropBlack();
+    	}else{
+    		chess[x][y].dropWhite();
+    	}
+    }
+    
     public final void initializeChess(){
     	this.chess[3][3].dropBlack();
     	this.chess[3][4].dropWhite();
@@ -79,10 +97,12 @@ public class ChessBoardPanel extends JPanel{
     
     public void undo() throws IOException{
     	if(socketServer != null){
-    		socketServer.out.writeObject(new SocketData(-1 , -1 , SocketData.WAITFORCOMFIRM));
+    		socketServer.out.writeObject(new SocketData(SocketData.WAITFORCOMFIRM));
+    		return;
     	}
     	else if(socketClient != null){
-    		socketClient.out.writeObject(new SocketData(-1 , -1 , SocketData.WAITFORCOMFIRM));
+    		socketClient.out.writeObject(new SocketData(SocketData.WAITFORCOMFIRM));
+    		return;
     	}
     	else if(undoChess.size()>=2){
     		if(timeOfUndo <2){
@@ -106,45 +126,24 @@ public class ChessBoardPanel extends JPanel{
         	int dialogResult = JOptionPane.showConfirmDialog (null, "Undo one step?","Undo",JOptionPane.YES_NO_OPTION);
     		if(dialogResult == JOptionPane.YES_OPTION){
     	    	if(socketServer != null){
-    	    		socketServer.out.writeObject(new SocketData(-1 , -1 , SocketData.COMFIRM));
-    	    		System.out.println("Server wrtie");
+    	    		socketServer.out.writeObject(new SocketData(SocketData.COMFIRM));
     	    	}
     	    	else if(socketClient != null){
-    	    		socketClient.out.writeObject(new SocketData(-1 , -1 , SocketData.COMFIRM));
-    	    		System.out.println("Server wrtie");
+    	    		socketClient.out.writeObject(new SocketData(SocketData.COMFIRM));
     	    	}
             	this.chess = undoChess.get(undoChess.size()-2);
             	undoChess.remove(undoChess.size()-1);		
     		}else{
     	    	if(socketServer != null){
-    	    		socketServer.out.writeObject(new SocketData(-1 , -1 , SocketData.DENIED));
+    	    		socketServer.out.writeObject(new SocketData(SocketData.DENIED));
     	    	}
     	    	else if(socketClient != null){
-    	    		socketClient.out.writeObject(new SocketData(-1 , -1 , SocketData.DENIED));
+    	    		socketClient.out.writeObject(new SocketData(SocketData.DENIED));
     	    	}
     		}
     	}
     	updateCanClick();
     }
-    
-    /*public void undoCheck() throws IOException{
-    	int dialogResult = JOptionPane.showConfirmDialog (null, "Undo one step?","Undo",JOptionPane.YES_NO_OPTION);
-		if(dialogResult == JOptionPane.YES_OPTION){
-	    	if(socketServer != null){
-	    		socketServer.out.writeObject(new SocketData(-1 , -1 , true));
-	    	}
-	    	else if(socketClient != null){
-	    		socketClient.out.writeObject(new SocketData(-1 , -1 , true));
-	    	}
-		}else{
-	    	if(socketServer != null){
-	    		socketServer.out.writeObject(new SocketData(-1 , -1 , false));
-	    	}
-	    	else if(socketClient != null){
-	    		socketClient.out.writeObject(new SocketData(-1 , -1 , false));
-	    	}
-		}
-    }*/
     
     public void initializeListener(int i , int j){
     	this.chess[i][j].jButton.addMouseListener(new MouseListener(){
@@ -163,6 +162,7 @@ public class ChessBoardPanel extends JPanel{
 								tempChess[i][j] = (Chess) chess[i][j].clone();
 							}
 						}
+						System.out.print(undoChess.size());
 						if(chess[i][j].blackCanClick && currentState == Chess.BLACK && isMyTurn){
 
 							undoChess.add(tempChess);
@@ -200,9 +200,9 @@ public class ChessBoardPanel extends JPanel{
 								e.printStackTrace();
 							}
 						}
-						
+						updateCanClick();
 						if(!hasNext()){
-							System.out.println("finished");
+							JOptionPane.showConfirmDialog (null, "Game Over!","Game Over!",JOptionPane.YES_NO_OPTION);
 							changState();
 						}
 					}
