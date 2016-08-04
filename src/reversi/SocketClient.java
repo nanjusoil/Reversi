@@ -37,7 +37,10 @@ public class SocketClient implements Runnable{
 		SocketData socketData;
 		try {
 			while((socketData=(SocketData)in.readObject())!=null){
-				if(socketData.state != 0){
+				if(!socketData.message.isEmpty()){
+					chessBoardPanel.chatTextArea.setText(chessBoardPanel.chatTextArea.getText() + "\n" + socketData.message);
+				}
+				else if(socketData.state != 0){
 					chessBoardPanel.undo(socketData.state);
 				}
 				else{

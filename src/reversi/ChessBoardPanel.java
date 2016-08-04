@@ -78,6 +78,20 @@ public class ChessBoardPanel extends JPanel{
 			@Override
 			public void keyPressed(KeyEvent keyEvent) {
 				if(keyEvent.getKeyCode() == keyEvent.VK_ENTER){
+					if(socketServer != null){
+						try {
+							socketServer.out.writeObject(new SocketData(chatTextField.getText()));
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+					if(socketClient != null){
+						try {
+							socketClient.out.writeObject(new SocketData(chatTextField.getText()));
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
 					chatTextArea.setText(chatTextArea.getText() + "\n" + chatTextField.getText());
 					chatTextField.setText("");
 				}
