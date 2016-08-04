@@ -40,6 +40,9 @@ public class ChessBoardPanel extends JPanel{
 	JTextField chatTextField ;
 	JTextArea chatTextArea;
 	JScrollPane scrollPane;
+	
+	JPanel statPanel;
+	JTextArea statTextArea;
     public ChessBoardPanel(){
     	super(new GridLayout(0, 8));
         Insets buttonMargin = new Insets(0,0,0,0);
@@ -72,6 +75,14 @@ public class ChessBoardPanel extends JPanel{
         
         chatPanel.add(scrollPane);
         chatPanel.add(chatTextField);
+        
+        statPanel = new JPanel();
+        statTextArea = new JTextArea("ascascasc");
+        statPanel.setLayout(new BoxLayout(statPanel , BoxLayout.Y_AXIS));
+        statPanel.add(statTextArea);
+        
+        statTextArea.setEditable(false);
+        
         
         chatTextField.addKeyListener(new KeyListener(){
 
@@ -277,7 +288,6 @@ public class ChessBoardPanel extends JPanel{
     void checkOrFlip(int x , int y , boolean shouldFlip){
     	int nextState = 0;
     	int[][] directions = { {-1 , 0} , {0 , -1} , {-1 , -1} , {1 , 1} , {1 , -1 } , {1 , 0} , {0 , 1} , {-1 , 1}};
-    	
 		if(this.chess[x][y].getState() == Chess.BLANK){
 			for(int direction = 0 ; direction < 8 ; direction++){
 				if(((x + directions[direction][0] >=0) && (x + directions[direction][0]) <8) && ((y + directions[direction][1] >=0) && (y + directions[direction][1] <8)))
@@ -352,10 +362,16 @@ public class ChessBoardPanel extends JPanel{
     }
     
     public void updateCanClick(){
+    	int numOfBlack = 0 , numOfWhite = 0;
     	for(int i = 0 ; i < 8 ; i++){
     		for(int j = 0 ; j < 8 ; j++){
     			this.chess[i][j].blackCanClick = false;
     			this.chess[i][j].whiteCanClick = false;
+    			if(this.chess[i][j].getState() == Chess.BLACK){
+    				numOfBlack++;
+    			}else if(this.chess[i][j].getState() == Chess.WHITE){
+    				numOfWhite++;
+    			}
     		}
     	}
     	for(int x = 0 ; x <8 ; x++){
@@ -363,5 +379,7 @@ public class ChessBoardPanel extends JPanel{
     			checkOrFlip(x, y , false);
     		}
     	}
+    	
+    	statTextArea.setText("Whites:  "  + numOfWhite + "\nBlacks: " + numOfBlack);
     }
 }

@@ -147,7 +147,7 @@ public class MainPanel extends JPanel{
         tools.add(buttonServer);
         tools.add(buttonClient);
         tools.addSeparator();
-        tools.add(new JButton("Resign"));
+        //tools.add(new JButton("Resign"));
         tools.addSeparator();
         tools.add(message);
 
@@ -155,5 +155,6 @@ public class MainPanel extends JPanel{
         chessBoardPanel.setBorder(new LineBorder(Color.BLACK));
         this.add(chessBoardPanel);
         this.add(chessBoardPanel.chatPanel, BorderLayout.PAGE_END);
+        this.add(chessBoardPanel.statPanel , BorderLayout.EAST);
     }
 }
