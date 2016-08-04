@@ -167,6 +167,19 @@ public class ChessBoardPanel extends JPanel{
     }
     
     public final void initializeChess(){
+    	for(int i = 0 ; i < 8 ; i++){
+    		for(int j = 0 ; j < 8 ; j++){
+    			this.chess[i][j].blackCanClick = false;
+    			this.chess[i][j].whiteCanClick = false;
+    			this.chess[i][j].setState(Chess.BLANK);
+    		}
+    	}
+    	if(socketServer !=null){
+    		isMyTurn = true;
+    	}
+    	if(socketClient !=null){
+    		isMyTurn = false;
+    	}
     	this.chess[3][3].dropBlack();
     	this.chess[3][4].dropWhite();
     	this.chess[4][3].dropWhite();

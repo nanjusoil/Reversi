@@ -17,6 +17,7 @@ import javax.sound.sampled.DataLine;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
@@ -147,12 +148,31 @@ public class MainPanel extends JPanel{
 			}
 			@Override
 			public void mousePressed(MouseEvent mouseEvent) {
-				chessBoardPanel.currentState = Chess.BLACK;
-				chessBoardPanel.isMyTurn = true;
-				//timer.stop();
-				chessBoardPanel.socketServer = new SocketServer(chessBoardPanel);
-				Thread serverThread = new Thread(chessBoardPanel.socketServer);
-				serverThread.start();
+				if(chessBoardPanel.socketServer != null){
+					try {
+						if(chessBoardPanel.socketServer.out != null){
+							chessBoardPanel.socketServer.out.close();
+						}
+						if(chessBoardPanel.socketServer.in != null){
+							chessBoardPanel.socketServer.in.close();
+						}
+						chessBoardPanel.socketServer.server.close();
+						chessBoardPanel.socketServer = new SocketServer(chessBoardPanel);
+						Thread serverThread = new Thread(chessBoardPanel.socketServer);
+						serverThread.start();					
+						chessBoardPanel.initializeChess();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}else{
+					chessBoardPanel.currentState = Chess.BLACK;
+					chessBoardPanel.isMyTurn = true;
+					//timer.stop();
+					chessBoardPanel.socketServer = new SocketServer(chessBoardPanel);
+					Thread serverThread = new Thread(chessBoardPanel.socketServer);
+					serverThread.start();					
+				}
+
 			}
 			@Override
 			public void mouseReleased(MouseEvent mouseEvent) {
@@ -172,12 +192,30 @@ public class MainPanel extends JPanel{
 			}
 			@Override
 			public void mousePressed(MouseEvent mouseEvent) {
-				chessBoardPanel.currentState = Chess.WHITE;
-				chessBoardPanel.isMyTurn = false;
-				//timer.stop();
-				chessBoardPanel.socketClient = new SocketClient(chessBoardPanel);
-				Thread clientThread = new Thread(chessBoardPanel.socketClient);
-				clientThread.start();
+				if(chessBoardPanel.socketClient != null){
+					try {
+						if(chessBoardPanel.socketClient.out != null){
+							chessBoardPanel.socketClient.out.close();
+						}
+						if(chessBoardPanel.socketClient.in != null){
+							chessBoardPanel.socketClient.in.close();
+						}
+						
+						chessBoardPanel.socketClient = new SocketClient(chessBoardPanel , JOptionPane.showInputDialog("input Ip!"));
+						Thread clientThread = new Thread(chessBoardPanel.socketClient);
+						clientThread.start();					
+						chessBoardPanel.initializeChess();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}else{
+						chessBoardPanel.currentState = Chess.WHITE;
+						chessBoardPanel.isMyTurn = false;
+						//timer.stop();
+						chessBoardPanel.socketClient = new SocketClient(chessBoardPanel , JOptionPane.showInputDialog("input Ip!"));
+						Thread clientThread = new Thread(chessBoardPanel.socketClient);
+						clientThread.start();
+				}
 			}
 			@Override
 			public void mouseReleased(MouseEvent mouseEvent) {

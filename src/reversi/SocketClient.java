@@ -16,9 +16,14 @@ public class SocketClient implements Runnable{
     ObjectInputStream in;
     ChessBoardPanel chessBoardPanel;
     
-	public SocketClient(ChessBoardPanel chessBoardPanel){
+	public SocketClient(ChessBoardPanel chessBoardPanel , String address){
 		Socket client = new Socket() ;
 		this.chessBoardPanel = chessBoardPanel;
+		if(!address.isEmpty()){
+			this.address = address;
+		}else{
+			this.address = "127.0.0.1";
+		}
 	    InetSocketAddress isa = new InetSocketAddress(this.address,this.port);
 	    try
 	    {
@@ -55,9 +60,10 @@ public class SocketClient implements Runnable{
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(null , "Connection Lost!");
-			System.exit(0);
 			e.printStackTrace();
+			JOptionPane.showMessageDialog(null , "Connection Lost!");
+			return;
+			//System.exit(0);
 		}
 	}
 }

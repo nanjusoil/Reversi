@@ -13,9 +13,9 @@ import javax.swing.JOptionPane;
 public class SocketServer implements Runnable {
 	private String address = "127.0.0.1";
 	private int port = 8765;
-	private ServerSocket server;
-    ObjectOutputStream out;
-    ObjectInputStream in;
+	public ServerSocket server;
+    public ObjectOutputStream out;
+    public ObjectInputStream in;
     ChessBoardPanel chessBoardPanel;
 
 	public SocketServer(ChessBoardPanel chessBoardPanel){
@@ -64,9 +64,10 @@ public class SocketServer implements Runnable {
 			}
 			catch(IOException e)
 			{
-				JOptionPane.showMessageDialog(null , "Connection Lost!");
-				System.exit(0);
 				e.printStackTrace();
+				JOptionPane.showMessageDialog(null , "Connection Lost!");
+				return;
+				//System.exit(0);
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
