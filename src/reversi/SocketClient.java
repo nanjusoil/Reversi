@@ -45,7 +45,6 @@ public class SocketClient implements Runnable{
 				}
 				else{
 					chessBoardPanel.isMyTurn = true;
-					chessBoardPanel.checkOrFlip(socketData.x , socketData.y, true);
 					chessBoardPanel.dropChess(socketData.x, socketData.y, true);
 					chessBoardPanel.seconds = chessBoardPanel.counDownTime;
 					chessBoardPanel.updateCanClick();

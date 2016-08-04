@@ -53,7 +53,6 @@ public class SocketServer implements Runnable {
 					}
 					else{
 					chessBoardPanel.isMyTurn = true;
-					chessBoardPanel.checkOrFlip(socketData.x , socketData.y, true);
 					chessBoardPanel.dropChess(socketData.x, socketData.y, false);
 					chessBoardPanel.seconds = chessBoardPanel.counDownTime;
 					chessBoardPanel.updateCanClick();

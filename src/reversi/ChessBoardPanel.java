@@ -131,6 +131,7 @@ public class ChessBoardPanel extends JPanel{
     }
     
     public void dropChess(int x, int y , boolean isBlack){
+    	checkOrFlip(x , y, true);
 		Chess[][] tempChess = new Chess[8][8];
 		for(int i = 0 ; i < 8 ; i++){
 			for(int j = 0 ; j < 8 ; j++){
@@ -144,6 +145,7 @@ public class ChessBoardPanel extends JPanel{
     	}else{
     		chess[x][y].dropWhite();
     	}
+		//checkOrFlip(x , y, true);
     }
     
     public final void initializeChess(){
@@ -214,17 +216,19 @@ public class ChessBoardPanel extends JPanel{
 					@Override
 					public void mousePressed(MouseEvent mouseEvent) {
 						updateCanClick();
-						Chess[][] tempChess = new Chess[8][8];
+						/*Chess[][] tempChess = new Chess[8][8];
 						for(int i = 0 ; i < 8 ; i++){
 							for(int j = 0 ; j < 8 ; j++){
 								tempChess[i][j] = (Chess) chess[i][j].clone();
 							}
-						}
+						}*/
 						if(chess[i][j].blackCanClick && currentState == Chess.BLACK && isMyTurn){
 
-							undoChess.add(tempChess);
+							
+							/*undoChess.add(tempChess);
 							checkOrFlip(i , j , true);
-							chess[i][j].dropBlack();
+							chess[i][j].dropBlack();*/
+							dropChess( i , j , true);
 							changState();
 							try {
 								if(socketServer!=null){
@@ -240,9 +244,10 @@ public class ChessBoardPanel extends JPanel{
 							}
 							}
 						if(chess[i][j].whiteCanClick && currentState == Chess.WHITE && isMyTurn){
-							undoChess.add(tempChess);
+							/*undoChess.add(tempChess);
 							checkOrFlip(i , j , true);
-							chess[i][j].dropWhite();
+							chess[i][j].dropWhite();*/
+							dropChess( i , j , false);
 							changState();
 							try {
 								if(socketServer!=null){
